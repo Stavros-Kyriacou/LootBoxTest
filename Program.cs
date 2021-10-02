@@ -13,52 +13,11 @@ namespace LootBoxTest
         static int[] tier4ComponentWeights = { 0, 0, 300, 300, 300, 300, 300, 15, 0, 0 };
         static int[] tier5ComponentWeights = { 0, 0, 400, 400, 350, 300, 300, 15, 1, 0 };
 
-        #region Component Tier Rolls
-        //tier 1 lootbox
-        //t1   300
-        //t2   5
-
-        //tier 2 lootbox
-        //t1   300
-        //t2   100
-        //t3   20
-        //t4   5
-
-        //tier 3 lootbox
-        //t1   500
-        //t2   400
-        //t3   300
-        //t4   80
-        //t5   30
-
-        //tier 4 lootbox
-        //t3   300
-        //t4   300
-        //t5   300
-        //t6   300
-        //t7   300
-        //t8   15
-
-        //tier 5 lootbox
-        //t3   400
-        //t4   400
-        //t5   350
-        //t6   300
-        //t7   300
-        //t8   15
-        //t9   1
-        #endregion
-
         static void Main(string[] args)
         {
-            //different tiers of lootboxes 1-5
-            //tier 1 lowest rarity, tier 5 highest
-            //each tier has a guaranteed number of rewards. eg tier 1 has 2 rewards
-
-            //scrap, gems, components, boosts
-
             while (true)
             {
+                //ask for the tier of lootbox to open
                 Console.WriteLine("Open a lootbox!");
                 Console.Write("Enter a tier(1-5) of lootbox to open: ");
                 int tier = int.Parse(Console.ReadLine());
@@ -67,25 +26,27 @@ namespace LootBoxTest
             }
         }
 
-        static void OpenLootBox(int tier)
+        //Generates rewards for each tier of lootbox, the number of rewards per lootbox is held in the rewards array
+        //e.g Tier1 Lootbox gives 2 rewards, Tier5 gives 6 rewards
+        static void OpenLootBox(int lootBoxTier)
         {
             Console.WriteLine("Your rewards are...");
-            for (int i = 0; i < rewards[tier - 1]; i++)
+            for (int i = 0; i < rewards[lootBoxTier - 1]; i++)
             {
                 int rewardType = RollWeights(rewardWeights);
                 switch (rewardType)
                 {
                     case 0:
-                        RollScrap(tier);
+                        RollScrap(lootBoxTier);
                         break;
                     case 1:
-                        RollGems(tier);
+                        RollGems(lootBoxTier);
                         break;
                     case 2:
-                        RollComponent(tier);
+                        RollComponent(lootBoxTier);
                         break;
                     case 3:
-                        RollBoost(tier);
+                        RollBoost(lootBoxTier);
                         break;
                     default:
                         break;
@@ -94,52 +55,9 @@ namespace LootBoxTest
             }
             Console.WriteLine();
         }
-        static void RollComponent(int tier)
-        {
-            int componentType = RollWeights(componentWeights);
-            int componentTier = 0;
 
-            switch (tier)
-            {
-                case 1:
-                    componentTier = RollWeights(tier1ComponentWeights);
-                    break;
-                case 2:
-                    componentTier = RollWeights(tier2ComponentWeights);
-                    break;
-                case 3:
-                    componentTier = RollWeights(tier3ComponentWeights);
-                    break;
-                case 4:
-                    componentTier = RollWeights(tier4ComponentWeights);
-                    break;
-                case 5:
-                    componentTier = RollWeights(tier5ComponentWeights);
-                    break;
-                default:
-                    break;
-            }
-            componentTier += 1;
-            
-            switch (componentType)
-            {
-                case 0:
-                    Console.WriteLine("You rolled a tier {0} CPU", componentTier);
-                    break;
-                case 1:
-                    Console.WriteLine("You rolled a tier {0} GPU", componentTier);
-                    break;
-                case 2:
-                    Console.WriteLine("You rolled a tier {0} HDD", componentTier);
-                    break;
-                case 3:
-                    Console.WriteLine("You rolled a tier {0} RAM", componentTier);
-                    break;
-                default:
-                    break;
-            }
-
-        }
+        //Takes an array of item weights and makes a roll on the loot table
+        //Returns the index of the item rolled in the array
         static int RollWeights(int[] weights)
         {
             Random random = new Random();
@@ -167,21 +85,62 @@ namespace LootBoxTest
             }
             return index;
         }
-        static void RollBoost(int tier)
+
+        //Rolls the component type using the componentWeights loot table
+        //Rolls the tier of component using the individual item weights depending on the lootBoxTier
+        static void RollComponent(int lootBoxTier)
         {
+            int componentType = RollWeights(componentWeights);
+            int componentTier = 0;
 
-            Console.WriteLine("You rolled a boost");
+            switch (lootBoxTier)
+            {
+                case 1:
+                    componentTier = RollWeights(tier1ComponentWeights);
+                    break;
+                case 2:
+                    componentTier = RollWeights(tier2ComponentWeights);
+                    break;
+                case 3:
+                    componentTier = RollWeights(tier3ComponentWeights);
+                    break;
+                case 4:
+                    componentTier = RollWeights(tier4ComponentWeights);
+                    break;
+                case 5:
+                    componentTier = RollWeights(tier5ComponentWeights);
+                    break;
+                default:
+                    break;
+            }
+            componentTier += 1;
 
-
-
-
+            switch (componentType)
+            {
+                case 0:
+                    Console.WriteLine("You rolled a tier {0} CPU", componentTier);
+                    break;
+                case 1:
+                    Console.WriteLine("You rolled a tier {0} GPU", componentTier);
+                    break;
+                case 2:
+                    Console.WriteLine("You rolled a tier {0} HDD", componentTier);
+                    break;
+                case 3:
+                    Console.WriteLine("You rolled a tier {0} RAM", componentTier);
+                    break;
+                default:
+                    break;
+            }
         }
-        static void RollScrap(int tier)
+
+        //Uses the lootBoxTier to roll a different amount of scrap
+        static void RollScrap(int lootBoxTier)
         {
             Random random = new Random();
             int scrap = 0;
 
-            switch (tier)
+            switch (lootBoxTier)
             {
                 case 1:
                     scrap = random.Next(5, 20);
@@ -203,12 +162,14 @@ namespace LootBoxTest
             }
             Console.WriteLine("You rolled {0} scrap", scrap);
         }
-        static void RollGems(int tier)
+
+        //Uses the lootBoxTier to roll a different amount of gems
+        static void RollGems(int lootBoxTier)
         {
             Random random = new Random();
             int gems = 0;
 
-            switch (tier)
+            switch (lootBoxTier)
             {
                 case 1:
                     gems = random.Next(1, 10);
@@ -229,6 +190,10 @@ namespace LootBoxTest
                     break;
             }
             Console.WriteLine("You rolled {0} gems", gems);
+        }
+        static void RollBoost(int tier)
+        {
+            Console.WriteLine("You rolled a boost");
         }
     }
 }
